@@ -9,21 +9,34 @@ from tweet_grabber import TwitterDataSheet
 
 # HOME *************************************************
 
+
 def index(request):
     if 'twtr_user' not in request.session:
         request.session['twtr_user'] = ''
     else:
         context = {
-            'user': Twitter_user.objects.get(screen_name=request.session['twtr_user'])
+            'user': Twitter_user.objects.get(
+                screen_name=request.session['twtr_user']
+            )
         }
     return render(request, 'index.html', context)
+
 
 def grab(request):
     if request.method == 'POST':
         request.session['twtr_user'] = request.POST['screen_name']
         try:
-            user = Twitter_user.objects.get(screen_name=request.session['twtr_user'])
+            user = Twitter_user.objects.get(
+                screen_name=request.session['twtr_user']
+            )
         except Twitter_user.DoesNotExist:
-            user = TwitterDataSheet(screen_name=request.POST['screen_name']).user
-            Twitter_user.objects.create(user_id=user.id, name=user.name, screen_name=user.screen_name, location=user.location, url=user.url, friends_count=user.friends_count, followers_count=user.followers_count, email=user.email, description=user.description, time_zone=user.time_zone)
+            user = TwitterDataSheet(
+                screen_name=request.POST['screen_name']).user
+            Twitter_user.objects.create(
+                user_id=user.id, name=user.name, screen_name=user.screen_name,
+                location=user.location, url=user.url,
+                friends_count=user.friends_count,
+                followers_count=user.followers_count, email=user.email,
+                description=user.description, time_zone=user.time_zone
+            )
         return redirect('in')
