@@ -11,13 +11,13 @@ class TwitterDataSheet(object):
         access_token_key='908045257484283904-JpG0pAber9n0qp1hLRpiYSqIT93VOUm',
         access_token_secret='HsEplzeY7jSvAmn4gLj42ijkSnqFIhm6dWimGZIcB9rvj',
     )
-    # Rick's Account
-    # api = twitter.Api(
-    #         consumer_key='XfyGfnpUqCv90OrBOxDX6g4Ga',
-    #         consumer_secret='DidKa9XdOOwvHjOqZwWFJdf1Z2ciRgmGuFyux1Tr1mhgDwG2rs',
-    #         access_token_key='305659119-GMkDSXwlGCnP2j3gT9BMMJcfUCoEJZtVqlyMSmvn',
-    #         access_token_secret='WHO2Fs9LdrZERaMrx2c4c9J2ieXALsYlrx8vFkl5ZdRdg',
-    #     )
+# Rick's Account
+# api = twitter.Api(
+#         consumer_key='XfyGfnpUqCv90OrBOxDX6g4Ga',
+#         consumer_secret='DidKa9XdOOwvHjOqZwWFJdf1Z2ciRgmGuFyux1Tr1mhgDwG2rs',
+#         access_token_key='305659119-GMkDSXwlGCnP2j3gT9BMMJcfUCoEJZtVqlyMSmvn',
+#         access_token_secret='WHO2Fs9LdrZERaMrx2c4c9J2ieXALsYlrx8vFkl5ZdRdg',
+#     )
 
     def __init__(self, screen_name):
         self.user = self.api.GetUser(screen_name=screen_name)

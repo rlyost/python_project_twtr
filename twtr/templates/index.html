@@ -4,6 +4,8 @@
     <title>Notes</title>
     {% load static %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src='https://api.mapbox.com/mapbox-gl-js/v0.44.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v0.44.1/mapbox-gl.css' rel='stylesheet' />
     <link rel='stylesheet' href="{% static 'css/twtr/twtr.css' %}" media="screen" title="no title" charset="utf-8">
 </head>
 <body>
@@ -81,4 +83,12 @@
           })
         });
       </script> -->
+      <div id='map' style='width: 400px; height: 300px;'></div>
+    <script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoidHdpdHRlci1kYXRhLXNoZWV0IiwiYSI6ImNqZmQ1dnliYTI1YmM0MHE3OG45cGU5NTIifQ.kFkLUTNISUOrq6V5rPDU0g';
+    var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v10'
+    });
+    </script>
 </html>
