@@ -13,8 +13,8 @@ class Twitter_user(models.Model):
     email = models.CharField(max_length=255, null=True)
     url = models.CharField(max_length=255, null=True)
     description = models.CharField(max_length=255, null=True)
-    time_zone = models.CharField(max_length=255)
-    user_since = models.DateTimeField(auto_now_add=True)
+    time_zone = models.CharField(max_length=255, null=True)
+    user_since = models.DateTimeField(auto_now_add=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
