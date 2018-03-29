@@ -2,4 +2,16 @@ from __future__ import unicode_literals
 
 from django.db import models
 
-# Create your models here.
+class Twitter_user(models.Model):
+    user_id =  models.IntegerField()
+    name = models.CharField(max_length=255)
+    screen_name = models.CharField(max_length=255)
+    location = models.CharField(max_length=255, null=True)
+    friends_count = models.IntegerField()
+    followers_count = models.IntegerField()
+    email = models.CharField(max_length=255, null=True)
+    url = models.CharField(max_length=255, null=True)
+    description = models.CharField(max_length=255, null=True)
+    time_zone = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True) 

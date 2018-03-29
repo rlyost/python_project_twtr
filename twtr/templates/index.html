@@ -10,7 +10,7 @@
     <div id='wrapper'>
         <h1>Search Twitter Data:</h1>
         <hr>
-        <form action='/search' method='POST' class='search' id='create_user_ajax_form'>
+        <form action='/grab' method='POST' class='search' id='create_user_ajax_form'>
             {% csrf_token %}
             Name:<input type='text' name='name'/>
             Twitter Screen Name:<input type='text' name='screen_name'/>
@@ -19,13 +19,54 @@
         <div class='data_space'>
             <div id='placeholder'>
                 <div class='data_object'>
+                    <h3> Search Results:</h3>
+                    <div class='user_res'>
+                        <table>
+                            <tr>
+                                <th>Name:</th>
+                                <td>{{ user.name }}</td>
+                            </tr>
+                            <tr>
+                                <th>Screen Name:</th>
+                                <td>{{ user.screen_name }}</td>
+                            </tr>
+                            <tr>
+                                <th>Location:</th>
+                                <td>{{ user.location }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class='user_res'>
+                        <table>
+                            <tr>
+                                <th>Friends:</th>
+                                <td>{{ user.friends_count }}</td>
+                            </tr>
+                            <tr>
+                                <th>Followers:</th>
+                                <td>{{ user.followers_count }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class='user_res'>
+                        <table>
+                            <tr>
+                                <th>Description:</th>
+                                <td>{{ user.description }}</td>
+                            </tr>
+                            <tr>
+                                <th>User since:</th>
+                                <td>{{ user.created_at }}</td>
+                            </tr>
+                        </table>
+                    </div>
                     <div class='data_object'></div>
                 </div>
             </div> <!--end of the placeholder-->
         </div>
     </div>
 </body>
-    <script>
+    <!-- <script>
         $('#create_user_ajax_form').submit(function(e){
           e.preventDefault()
           console.log('Sending Ajax request to', $(this).attr('action'))
@@ -39,5 +80,5 @@
             }
           })
         });
-      </script>
+      </script> -->
 </html>
