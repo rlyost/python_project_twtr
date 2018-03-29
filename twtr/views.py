@@ -9,14 +9,18 @@ from tweet_grabber import TwitterDataSheet
 
 # HOME *************************************************
 
+
 def index(request):
     if 'twtr_user' not in request.session:
         request.session['twtr_user'] = 'ryost_esq'
     else:
         context = {
-            'user': Twitter_user.objects.get(screen_name=request.session['twtr_user'])
+            'user': Twitter_user.objects.get(
+                screen_name=request.session['twtr_user']
+            )
         }
     return render(request, 'index.html', context)
+
 
 def grab(request):
     if request.method == 'POST':
