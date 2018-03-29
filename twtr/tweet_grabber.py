@@ -1,7 +1,5 @@
-import geopy
 from geopy.geocoders import Nominatim
 import re
-import time
 import twitter
 
 
@@ -24,6 +22,7 @@ class TwitterDataSheet(object):
 
     def __init__(self, screen_name):
         self.user = self.api.GetUser(screen_name=screen_name)
+        self.user.coordinates = self.find_user_coordinates()
         # self.user in an object containing the following attributes:
         # 'param_defaults', 'contributors_enabled', 'created_at',
         # 'default_profile', 'default_profile_image', 'description',
@@ -38,7 +37,7 @@ class TwitterDataSheet(object):
         # 'profile_use_background_image', 'protected', 'screen_name',
         # 'status', 'statuses_count', 'time_zone', 'url', 'utc_offset',
         # 'verified', 'withheld_in_countries', 'withheld_scope', '_json']
-        self.friends = self.api.GetFriends(screen_name=screen_name)
+        self.friends = None
 
 
     # Basic User Info Attributes:
@@ -69,11 +68,9 @@ class TwitterDataSheet(object):
                 print((location.latitude, location.longitude))
             except AttributeError:
                 return None
-            except geopy.exe.GeocoderTimedOut:
-                print("sleeping")
-                time.sleep(5)
-                location = geolocator.geocode(location_str)
-                print((location.latitude, location.longitude))
+            except Exception as e:
+                print(e)
+                return None
             else:
                 try:
                     coordinates = (location.latitude, location.longitude)
@@ -82,3 +79,7 @@ class TwitterDataSheet(object):
                 else:
                     return coordinates
 
+    def get_friends(self):
+        '''Calls Twitter Api and returns a list of Twitter.User Objects'''
+        self.friends = self.api.GetFriends(sceen_name=self.user.screen_name)
+        return self.friends
