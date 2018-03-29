@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Notes</title>
+    {% load static %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel='stylesheet' href="{% static 'css/twtr/twtr.css' %}" media="screen" title="no title" charset="utf-8">
+</head>
+<body>
+    <div id='wrapper'>
+        <h1>Search Twitter Data:</h1>
+        <hr>
+        <form action='/search' method='POST' class='search' id='create_user_ajax_form'>
+            {% csrf_token %}
+            Name:<input type='text' name='name'/>
+            Twitter Screen Name:<input type='text' name='screen_name'/>
+            <input type="submit" value="Search" class='but'>
+        </form>
+        <div class='data_space'>
+            <div id='placeholder'>
+                <div class='data_object'>
+                    <div class='data_object'></div>
+                </div>
+            </div> <!--end of the placeholder-->
+        </div>
+    </div>
+</body>
+    <script>
+        $('#create_user_ajax_form').submit(function(e){
+          e.preventDefault()
+          console.log('Sending Ajax request to', $(this).attr('action'))
+          console.log('Submitting the following data', $(this).serialize())
+          $.ajax({
+            url: $(this).attr('action'), /* Where should this go? */
+            method: 'post', /* Which HTTP verb? */
+            data: $(this).serialize(), /* Any data to send along? */
+            success: function(serverResponse) { /* What code should we run when the server responds? */
+              $('#placeholder').html(serverResponse)
+            }
+          })
+        });
+      </script>
+</html>
