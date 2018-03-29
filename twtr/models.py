@@ -14,6 +14,7 @@ class Twitter_user(models.Model):
     url = models.CharField(max_length=255, null=True)
     description = models.CharField(max_length=255, null=True)
     time_zone = models.CharField(max_length=255)
+    user_since = models.DateTimeField(auto_now_add=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

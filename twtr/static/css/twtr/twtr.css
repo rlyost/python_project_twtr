@@ -1,5 +1,7 @@
 .wrapper {
-    
+    width:100%;
+    margin: 50px auto;
+    text-align: center;
 }
 .but {
     color: white;
@@ -15,4 +17,5 @@
     display: inline-block;
     vertical-align: top;
     margin: 0 20px;
+    overflow-wrap: break-word;
 }
