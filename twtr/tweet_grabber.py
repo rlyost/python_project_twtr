@@ -1,3 +1,7 @@
+import geopy
+from geopy.geocoders import Nominatim
+import re
+import time
 import twitter
 
 
@@ -8,7 +12,7 @@ class TwitterDataSheet(object):
         access_token_key='908045257484283904-JpG0pAber9n0qp1hLRpiYSqIT93VOUm',
         access_token_secret='HsEplzeY7jSvAmn4gLj42ijkSnqFIhm6dWimGZIcB9rvj',
     )
-
+    
     def __init__(self, screen_name):
         self.user = self.api.GetUser(screen_name=screen_name)
         # self.user in an object containing the following attributes:
@@ -25,12 +29,8 @@ class TwitterDataSheet(object):
         # 'profile_use_background_image', 'protected', 'screen_name',
         # 'status', 'statuses_count', 'time_zone', 'url', 'utc_offset',
         # 'verified', 'withheld_in_countries', 'withheld_scope', '_json']
+        self.friends = self.api.GetFriends(screen_name=screen_name)
 
-        self.friends = self.api.GetFriends(screen_name=self.user_name)
-        # This is a list of Twitter User objects
-        # Each Friend in self.friends has the same attributes as above
-
-        self.friend_locations = self.find_friend_locations()
 
     # Basic User Info Attributes:
     # - name: Rick L Yost
@@ -49,13 +49,34 @@ class TwitterDataSheet(object):
     # - description: South Dakotan, JD/MBA PMP #veteran #airborne #ranger #Entrepreneur @vetlistus @adjutantadmn @sheepdogbook @RangerAssoc
     # - created_at: Thu May 26 15:50:21 +0000 2011
     
-
-        
-
     def find_friend_locations(self):
         '''Returns a list of a user's friends locations with the duplicates
         removed
         '''
-        return set(
+        geolocator = Nominatim()
+        loc_regex = re.compile(r'[\w\d\s-]+, [\w\s\d]+')
+        locations = set(
             [friend.location for friend in self.friends if friend.location]
         )
+        coordinates_lst = []
+        for location_str in locations:
+            if re.search(loc_regex, location_str):
+                try:
+                    location = geolocator.geocode(location_str)
+                    print((location.latitude, location.longitude))
+                except AttributeError:
+                    pass
+                except geopy.exe.GeocoderTimedOut:
+                    print("sleeping")
+                    time.sleep(5)
+                    location = geolocator.geocode(location_str)
+                    print((location.latitude, location.longitude))
+                else:
+                    try:
+                        coordinates_lst.append(
+                            (location.latitude, location.longitude)
+                        )
+                    except AttributeError:
+                        pass
+        return coordinates_lst
+
