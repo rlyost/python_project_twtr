@@ -13,23 +13,22 @@ from tweet_grabber import TwitterDataSheet
 def index(request):
     if 'twtr_user' not in request.session:
         request.session['twtr_user'] = 'ryost_esq'
-    else:
-        context = {
-            'user': Twitter_user.objects.get(
-                screen_name=request.session['twtr_user']
-            )
-        }
+    context = {
+        'user': Twitter_user.objects.get(
+            screen_name=request.session['twtr_user']
+        )
+    }
     return render(request, 'index.html', context)
 
 
 def grab(request):
     if request.method == 'POST':
         try:
-            print request.session['twtr_user']
             user = Twitter_user.objects.get(screen_name=request.POST['screen_name'])
         except Twitter_user.DoesNotExist:
-            print "not in Db"
             user = TwitterDataSheet(screen_name=request.POST['screen_name']).user
-            Twitter_user.objects.create(user_id=user.id, name=user.name, screen_name=user.screen_name, location=user.location, url=user.url, friends_count=user.friends_count, followers_count=user.followers_count, email=user.email, description=user.description, user_since=user.created_at, time_zone=user.time_zone)
-            request.session['twtr_user'] = request.POST['screen_name']    
+            if not user.coordinates:
+                user.coordinates = (None,None)
+            Twitter_user.objects.create(user_id=user.id, name=user.name, screen_name=user.screen_name, location=user.location, url=user.url, friends_count=user.friends_count, followers_count=user.followers_count, email=user.email, description=user.description, user_since=user.created_at, time_zone=user.time_zone, latitude=user.coordinates[0], longitude=user.coordinates[1])
+        request.session['twtr_user'] = request.POST['screen_name']    
         return redirect('in')
