@@ -1,5 +1,6 @@
 from geopy.geocoders import Nominatim
 import re
+import time
 import twitter
 
 
@@ -58,25 +59,26 @@ class TwitterDataSheet(object):
     
     def find_user_coordinates(self):
         '''Returns the coordinates of the location field on a user's profile'''
-        loc_regex = re.compile(r'[\w\d\s-]+, [\w\s\d]+')
+        loc_regex = re.compile(r'[\w\d\s-]+,? [\w\s\d]*')
         location_str = self.user.location
         if re.search(loc_regex, location_str):
             try:
                 geolocator = Nominatim()
                 location = geolocator.geocode(location_str)
-                print((location.latitude, location.longitude))
             except AttributeError:
                 return None
             except Exception as e:
                 print(e)
-                return None
+                time.sleep(2)
+                location = geolocator.geocode(location_str)
+            try:
+                coordinates = (location.latitude, location.longitude)
+                print((location.latitude, location.longitude))
+            except Exception as e:
+                print(e)
             else:
-                try:
-                    coordinates = (location.latitude, location.longitude)
-                except AttributeError:
-                    return None
-                else:
-                    return coordinates
+                return coordinates
+        return None
 
     def get_friends(self):
         '''Calls Twitter Api and returns a list of Twitter.User Objects'''
