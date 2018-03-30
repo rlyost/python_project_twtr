@@ -39,6 +39,9 @@ class TwitterDataSheet(object):
         # 'verified', 'withheld_in_countries', 'withheld_scope', '_json']
         self.friends = None
 
+        for user in Twitter_user.objects.all():
+            print("{},{},{}".format(user.name,user.latitude,user.longitude))
+
 
     # Basic User Info Attributes:
     # - name: Rick L Yost
@@ -82,5 +85,5 @@ class TwitterDataSheet(object):
 
     def get_friends(self):
         '''Calls Twitter Api and returns a list of Twitter.User Objects'''
-        self.friends = self.api.GetFriends(sceen_name=self.user.screen_name)
+        self.friends = self.api.GetFriends(screen_name=self.user.screen_name)
         return self.friends

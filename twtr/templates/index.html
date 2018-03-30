@@ -70,7 +70,7 @@
     </div>
     <div id='graphDiv' style='width: 400px; height: 300px;'></div>
     <script>
-            Plotly.d3.csv('https://raw.githubusercontent.com/bcdunbar/datasets/master/meteorites_subset.csv', function(err, rows){
+            Plotly.d3.csv('https://raw.githubusercontent.com/LawerenceLee/python_project_twtr/master/twtr/user_coord.csv', function(err, rows){
   
                 var classArray = unpack(rows, 'class');
                 var classes = [...new Set(classArray)];
@@ -86,13 +86,13 @@
                   return {
                      type: 'scattermapbox',
                      name: classes,
-                     lat: unpack(rowsFiltered, 'reclat'),
-                     lon: unpack(rowsFiltered, 'reclong')
+                     lat: unpack(rowsFiltered, 'latitude'),
+                     lon: unpack(rowsFiltered, 'longitude')
                   };
                 });
                 
                 var layout = {
-                   title: 'Meteorite Landing Locations',
+                   title: "Friend's Locations",
                    font: {
                        color: 'white'
                    },
@@ -118,13 +118,13 @@
                   }, 
                   paper_bgcolor: '#191A1A', 
                   plot_bgcolor: '#191A1A', 
-                  showlegend: true,
+                  showlegend: false,
                    annotations: [{
                        x: 0,
                      y: 0,
                      xref: 'paper',
                      yref: 'paper',
-                       text: 'Source: <a href="https://data.nasa.gov/Space-Science/Meteorite-Landings/gh4g-9sfh" style="color: rgb(255,255,255)">NASA</a>',
+                       text: 'Source: <a href="{{ user.url }}" style="color: rgb(255,255,255)">Twitter</a>',
                        showarrow: false
                    }]
                 };
