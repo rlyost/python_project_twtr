@@ -1,7 +1,14 @@
-.wrapper {
+body {
+    /* background-color: #191a1a; */
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+body * {
+    /* color: #fafbfb; */
+}
+#wrapper {
     width:100%;
     margin: 50px auto;
-    text-align: center;
+    /* text-align: center; */
 }
 .but {
     color: white;

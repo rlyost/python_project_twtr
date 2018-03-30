@@ -1,8 +1,11 @@
-from geopy.geocoders import Nominatim
+import csv
+import datetime
+import os
 import re
 import time
+
+from geopy.geocoders import Nominatim
 import twitter
-import datetime
 
 
 class TwitterDataSheet(object):
@@ -39,25 +42,6 @@ class TwitterDataSheet(object):
         # 'profile_use_background_image', 'protected', 'screen_name',
         # 'status', 'statuses_count', 'time_zone', 'url', 'utc_offset',
         # 'verified', 'withheld_in_countries', 'withheld_scope', '_json']
-        self.friends = self.get_friends()
-
-
-    # Basic User Info Attributes:
-    # - name: Rick L Yost
-    # - notifications: False
-    # - screen_name: ryost_esq
-    # - statuses_count 366
-    # - time_zone: Eastern Time (US & Canada)
-    # - url: https://t.co/PabZ7AGIr3
-    # - location: San Francisco Bay Area, CA
-    # - listed_count: 22
-    # - friends_count: 673 
-    # - following: False
-    # - followers_count: 418
-    # - favourites_count: 435
-    # - email: None
-    # - description: South Dakotan, JD/MBA PMP #veteran #airborne #ranger #Entrepreneur @vetlistus @adjutantadmn @sheepdogbook @RangerAssoc
-    # - created_at: Thu May 26 15:50:21 +0000 2011
     
     def find_user_coordinates(self):
         '''Returns the coordinates of the location field on a user's profile'''
@@ -82,16 +66,82 @@ class TwitterDataSheet(object):
                 return coordinates
         return None
 
-    def get_friends(self):
-        '''Calls Twitter Api and returns a list of Twitter.User Objects'''
-        return self.api.GetFriends(screen_name=self.user.screen_name)
-    
     def generate_date_time(self):
+        '''Converts Twitter api provided created_at attribute into the
+        proper format for Drango ORM DateTimeFields
+        '''
         temp = self.user.created_at.split(' ')
         temp2 = temp[0]+" "+temp[1]+" "+temp[2]+" "+temp[3]+" "+temp[5]
         dt = datetime.datetime.strptime(temp2, "%a %b %d %H:%M:%S %Y")
         return dt.strftime('%Y-%m-%d %H:%M:%S')
 
-    def build_csv(self):
-        with open("/static/csv/{}.csv".format(self.screen_name), )
-        for friend in self.friends
+
+api = twitter.Api(
+        consumer_key='ceDtKbZWwrPWKh6iCFUlxCUEq',
+        consumer_secret='7btaaEI97fQef8D71hJu5qwgE1x3LUoGG1RMn5CcAU9XEZct1H',
+        access_token_key='908045257484283904-JpG0pAber9n0qp1hLRpiYSqIT93VOUm',
+        access_token_secret='HsEplzeY7jSvAmn4gLj42ijkSnqFIhm6dWimGZIcB9rvj',
+    )
+
+
+def build_csv(screen_name):
+    fieldnames = ['class', "latitude", "longitude"]
+    root = os.getcwd()
+    csv_path = "{}/twtr/static/csv/{}.csv".format(root, screen_name)
+    with open(csv_path, 'a') as csv_file:
+        row_writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+
+        friends = api.GetFriends(screen_name=screen_name)
+        row_writer.writeheader()
+        for friend in friends:
+            friend.latitude = None
+            friend.longitude = None
+            try:
+                print(friend.location)
+            except Exception as e:
+                print(e)
+            else:
+                friend = find_user_coordinates(friend)
+                if type(friend) != 'NoneType':
+                    try:
+                        row_writer.writerow({
+                            'class': "no_time_zone",
+                            'latitude': friend.latitude,
+                            'longitude': friend.longitude,
+                        })
+                    except AttributeError:
+                        pass
+                else:
+                    try:
+                        row_writer.writerow({
+                            'class': friend.time_zone,
+                            'latitude': friend.latitude,
+                            'longitude': friend.longitude,
+                        })
+                    except AttributeError as e:
+                        pass
+
+
+def find_user_coordinates(friend):
+    '''Returns the coordinates of the location field on a user's profile'''
+    loc_regex = re.compile(r'[\w\d\s-]+,? [\w\s\d]*')
+    location_str = friend.location
+    if re.search(loc_regex, location_str):
+        try:
+            geolocator = Nominatim()
+            location = geolocator.geocode(location_str)
+        except AttributeError:
+            return None
+        except Exception as e:
+            print(e)
+            time.sleep(5)
+            location = geolocator.geocode(location_str)
+        try:
+            friend.latitude = location.latitude
+            friend.longitude = location.longitude
+            print(location.latitude, location.longitude)
+        except Exception as e:
+            print(e)
+        else:
+            return friend
+    return None
