@@ -91,3 +91,7 @@ class TwitterDataSheet(object):
         temp2 = temp[0]+" "+temp[1]+" "+temp[2]+" "+temp[3]+" "+temp[5]
         dt = datetime.datetime.strptime(temp2, "%a %b %d %H:%M:%S %Y")
         return dt.strftime('%Y-%m-%d %H:%M:%S')
+
+    def build_csv(self):
+        with open("/static/csv/{}.csv".format(self.screen_name), )
+        for friend in self.friends

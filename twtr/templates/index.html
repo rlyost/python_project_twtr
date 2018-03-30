@@ -13,9 +13,9 @@
         <hr>
         <form action='/grab' method='POST' class='search' id='create_user_ajax_form'>
             {% csrf_token %}
-            <h3>Name:</h3><input type='text' name='name'/>
-            <h3>*Twitter Screen Name:</h3><input type='text' name='screen_name'/>
-            <input type="submit" value="Search" class='but'>
+            <h3>Name:<input type='text' name='name'/>
+            *Twitter Screen Name:<input type='text' name='screen_name'/>
+            <input type="submit" value="Search" class='but'></h3>
         </form>
         <div class='data_space'>
             <div id='placeholder'>

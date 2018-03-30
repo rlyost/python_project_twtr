@@ -6,6 +6,7 @@ from .models import Twitter_user
 from django.core import serializers
 import json
 from tweet_grabber import TwitterDataSheet
+from twitter.error import TwitterError
 
 # HOME *************************************************
 
@@ -26,13 +27,14 @@ def grab(request):
         try:
             user = Twitter_user.objects.get(screen_name=request.POST['screen_name'])
         except Twitter_user.DoesNotExist:
-            user = TwitterDataSheet(screen_name=request.POST['screen_name']).user
-            print
-            print user.profile_image_url
-            print user.created_at
-            print
-            if not user.coordinates:
-                user.coordinates = (None,None)
-            Twitter_user.objects.create(user_id=user.id, name=user.name, screen_name=user.screen_name, location=user.location, url=user.url, friends_count=user.friends_count, followers_count=user.followers_count, email=user.email, description=user.description, user_since=user.created_at, time_zone=user.time_zone, latitude=user.coordinates[0], longitude=user.coordinates[1], profile_img=user.profile_image_url)
+            try:
+                user = TwitterDataSheet(screen_name=request.POST['screen_name']).user
+                if not user.coordinates:
+                    user.coordinates = (None,None)
+                Twitter_user.objects.create(user_id=user.id, name=user.name, screen_name=user.screen_name, location=user.location, url=user.url, friends_count=user.friends_count, followers_count=user.followers_count, email=user.email, description=user.description, user_since=user.created_at, time_zone=user.time_zone, latitude=user.coordinates[0], longitude=user.coordinates[1], profile_img=user.profile_image_url)
+            except Twitter_user.DoesNotExist:
+                return redirect('in')
+            except TwitterError:
+                return redirect('in')
         request.session['twtr_user'] = request.POST['screen_name']    
         return redirect('in')
