@@ -41,9 +41,6 @@ class TwitterDataSheet(object):
         # 'verified', 'withheld_in_countries', 'withheld_scope', '_json']
         self.friends = None
 
-        for user in Twitter_user.objects.all():
-            print("{},{},{}".format(user.name,user.latitude,user.longitude))
-
 
     # Basic User Info Attributes:
     # - name: Rick L Yost
