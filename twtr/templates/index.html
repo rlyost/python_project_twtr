@@ -8,6 +8,7 @@
 </head>
 <body>
     <div id='wrapper'>
+        <img src={{user.profile_image_url|safe}} alt="Profile Image" style="width:100px;height:100px;">
         <h1>Search Twitter Data:</h1>
         <hr>
         <form action='/grab' method='POST' class='search' id='create_user_ajax_form'>
@@ -20,6 +21,9 @@
             <div id='placeholder'>
                 <div class='data_object'>
                     <h3> Search Results:</h3>
+                    <div class='user_res'>
+                        <img src="{{user.profile_img }}" alt="Profile Image" style="width:75px;height:75px;">
+                    </div>
                     <div class='user_res'>
                         <table>
                             <tr>

@@ -9,7 +9,6 @@ from tweet_grabber import TwitterDataSheet
 
 # HOME *************************************************
 
-
 def index(request):
     if 'twtr_user' not in request.session:
         request.session['twtr_user'] = 'ryost_esq'
@@ -20,6 +19,7 @@ def index(request):
     }
     return render(request, 'index.html', context)
 
+# GRAB DATA FROM DATABASE/API ******************************************
 
 def grab(request):
     if request.method == 'POST':
@@ -27,8 +27,12 @@ def grab(request):
             user = Twitter_user.objects.get(screen_name=request.POST['screen_name'])
         except Twitter_user.DoesNotExist:
             user = TwitterDataSheet(screen_name=request.POST['screen_name']).user
+            print
+            print user.profile_image_url
+            print user.created_at
+            print
             if not user.coordinates:
                 user.coordinates = (None,None)
-            Twitter_user.objects.create(user_id=user.id, name=user.name, screen_name=user.screen_name, location=user.location, url=user.url, friends_count=user.friends_count, followers_count=user.followers_count, email=user.email, description=user.description, user_since=user.created_at, time_zone=user.time_zone, latitude=user.coordinates[0], longitude=user.coordinates[1])
+            Twitter_user.objects.create(user_id=user.id, name=user.name, screen_name=user.screen_name, location=user.location, url=user.url, friends_count=user.friends_count, followers_count=user.followers_count, email=user.email, description=user.description, user_since=user.created_at, time_zone=user.time_zone, latitude=user.coordinates[0], longitude=user.coordinates[1], profile_img=user.profile_image_url)
         request.session['twtr_user'] = request.POST['screen_name']    
         return redirect('in')

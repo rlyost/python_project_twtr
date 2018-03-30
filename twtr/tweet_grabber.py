@@ -1,6 +1,7 @@
 from geopy.geocoders import Nominatim
 import re
 import twitter
+import datetime
 
 
 class TwitterDataSheet(object):
@@ -22,6 +23,7 @@ class TwitterDataSheet(object):
     def __init__(self, screen_name):
         self.user = self.api.GetUser(screen_name=screen_name)
         self.user.coordinates = self.find_user_coordinates()
+        self.user.created_at = self.generate_date_time()
         # self.user in an object containing the following attributes:
         # 'param_defaults', 'contributors_enabled', 'created_at',
         # 'default_profile', 'default_profile_image', 'description',
@@ -82,3 +84,9 @@ class TwitterDataSheet(object):
         '''Calls Twitter Api and returns a list of Twitter.User Objects'''
         self.friends = self.api.GetFriends(sceen_name=self.user.screen_name)
         return self.friends
+    
+    def generate_date_time(self):
+        temp = self.user.created_at.split(' ')
+        temp2 = temp[0]+ " " + temp[1] + " " + temp[2] + " " + temp[3] + " " + temp[5]
+        dt = datetime.datetime.strptime(temp2, "%a %b %d %H:%M:%S %Y")
+        return dt.strftime('%Y-%m-%d %H:%M:%S')
