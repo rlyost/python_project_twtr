@@ -1,5 +1,6 @@
 from geopy.geocoders import Nominatim
 import re
+import time
 import twitter
 import datetime
 
@@ -12,13 +13,13 @@ class TwitterDataSheet(object):
         access_token_key='908045257484283904-JpG0pAber9n0qp1hLRpiYSqIT93VOUm',
         access_token_secret='HsEplzeY7jSvAmn4gLj42ijkSnqFIhm6dWimGZIcB9rvj',
     )
-    # Rick's Account
-    # api = twitter.Api(
-    #         consumer_key='XfyGfnpUqCv90OrBOxDX6g4Ga',
-    #         consumer_secret='DidKa9XdOOwvHjOqZwWFJdf1Z2ciRgmGuFyux1Tr1mhgDwG2rs',
-    #         access_token_key='305659119-GMkDSXwlGCnP2j3gT9BMMJcfUCoEJZtVqlyMSmvn',
-    #         access_token_secret='WHO2Fs9LdrZERaMrx2c4c9J2ieXALsYlrx8vFkl5ZdRdg',
-    #     )
+# Rick's Account
+# api = twitter.Api(
+#         consumer_key='XfyGfnpUqCv90OrBOxDX6g4Ga',
+#         consumer_secret='DidKa9XdOOwvHjOqZwWFJdf1Z2ciRgmGuFyux1Tr1mhgDwG2rs',
+#         access_token_key='305659119-GMkDSXwlGCnP2j3gT9BMMJcfUCoEJZtVqlyMSmvn',
+#         access_token_secret='WHO2Fs9LdrZERaMrx2c4c9J2ieXALsYlrx8vFkl5ZdRdg',
+#     )
 
     def __init__(self, screen_name):
         self.user = self.api.GetUser(screen_name=screen_name)
@@ -40,6 +41,9 @@ class TwitterDataSheet(object):
         # 'verified', 'withheld_in_countries', 'withheld_scope', '_json']
         self.friends = None
 
+        for user in Twitter_user.objects.all():
+            print("{},{},{}".format(user.name,user.latitude,user.longitude))
+
 
     # Basic User Info Attributes:
     # - name: Rick L Yost
@@ -60,29 +64,30 @@ class TwitterDataSheet(object):
     
     def find_user_coordinates(self):
         '''Returns the coordinates of the location field on a user's profile'''
-        loc_regex = re.compile(r'[\w\d\s-]+, [\w\s\d]+')
+        loc_regex = re.compile(r'[\w\d\s-]+,? [\w\s\d]*')
         location_str = self.user.location
         if re.search(loc_regex, location_str):
             try:
                 geolocator = Nominatim()
                 location = geolocator.geocode(location_str)
-                print((location.latitude, location.longitude))
             except AttributeError:
                 return None
             except Exception as e:
                 print(e)
-                return None
+                time.sleep(2)
+                location = geolocator.geocode(location_str)
+            try:
+                coordinates = (location.latitude, location.longitude)
+                print((location.latitude, location.longitude))
+            except Exception as e:
+                print(e)
             else:
-                try:
-                    coordinates = (location.latitude, location.longitude)
-                except AttributeError:
-                    return None
-                else:
-                    return coordinates
+                return coordinates
+        return None
 
     def get_friends(self):
         '''Calls Twitter Api and returns a list of Twitter.User Objects'''
-        self.friends = self.api.GetFriends(sceen_name=self.user.screen_name)
+        self.friends = self.api.GetFriends(screen_name=self.user.screen_name)
         return self.friends
     
     def generate_date_time(self):

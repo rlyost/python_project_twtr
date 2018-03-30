@@ -4,6 +4,7 @@
     <title>Notes</title>
     {% load static %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <link rel='stylesheet' href="{% static 'css/twtr/twtr.css' %}" media="screen" title="no title" charset="utf-8">
 </head>
 <body>
@@ -72,6 +73,74 @@
             </div> <!--end of the placeholder-->
         </div>
     </div>
+    <div id='graphDiv' style='width: auto; height: 400px;'></div>
+    <script>
+            Plotly.d3.csv("{% static 'csv/user_coord.csv' %}", function(err, rows){
+  
+                var classArray = unpack(rows, 'class');
+                var classes = [...new Set(classArray)];
+              
+                function unpack(rows, key) {
+                  return rows.map(function(row) { return row[key]; });
+                }
+              
+                var data = classes.map(function(classes) {
+                  var rowsFiltered = rows.filter(function(row) {
+                      return (row.class === classes);
+                  });
+                  return {
+                     type: 'scattermapbox',
+                     name: classes,
+                     lat: unpack(rowsFiltered, 'latitude'),
+                     lon: unpack(rowsFiltered, 'longitude')
+                  };
+                });
+                
+                var layout = {
+                   title: "Friend's Locations",
+                   font: {
+                       color: 'white'
+                   },
+                  dragmode: 'zoom', 
+                  mapbox: {
+                    center: {
+                      lat: 38.03697222, 
+                      lon: -0.70916722
+                    }, 
+                    domain: {
+                      x: [0, 1], 
+                      y: [0, 1]
+                    }, 
+                    style: 'dark', 
+                    zoom: 1
+                  }, 
+                  margin: {
+                    r: 20, 
+                    t: 40, 
+                    b: 20, 
+                    l: 20, 
+                    pad: 0
+                  }, 
+                  paper_bgcolor: '#191A1A', 
+                  plot_bgcolor: '#191A1A', 
+                  showlegend: false,
+                   annotations: [{
+                       x: 0,
+                     y: 0,
+                     xref: 'paper',
+                     yref: 'paper',
+                       text: 'Source: <a href="https://twitter.com/{{ user.screen_name }}" style="color: rgb(255,255,255)">Twitter</a>',
+                       showarrow: false
+                   }]
+                };
+                
+                Plotly.setPlotConfig({
+                  mapboxAccessToken: 'pk.eyJ1IjoidHdpdHRlci1kYXRhLXNoZWV0IiwiYSI6ImNqZmQ1dnliYTI1YmM0MHE3OG45cGU5NTIifQ.kFkLUTNISUOrq6V5rPDU0g'
+                });
+                
+                Plotly.plot('graphDiv', data, layout);
+              });
+    </script>
 </body>
     <!-- <script>
         $('#create_user_ajax_form').submit(function(e){
@@ -88,4 +157,7 @@
           })
         });
       </script> -->
+
+
+    
 </html>
