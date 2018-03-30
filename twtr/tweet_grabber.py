@@ -39,10 +39,7 @@ class TwitterDataSheet(object):
         # 'profile_use_background_image', 'protected', 'screen_name',
         # 'status', 'statuses_count', 'time_zone', 'url', 'utc_offset',
         # 'verified', 'withheld_in_countries', 'withheld_scope', '_json']
-        self.friends = None
-
-        for user in Twitter_user.objects.all():
-            print("{},{},{}".format(user.name,user.latitude,user.longitude))
+        self.friends = self.get_friends()
 
 
     # Basic User Info Attributes:
@@ -87,11 +84,10 @@ class TwitterDataSheet(object):
 
     def get_friends(self):
         '''Calls Twitter Api and returns a list of Twitter.User Objects'''
-        self.friends = self.api.GetFriends(screen_name=self.user.screen_name)
-        return self.friends
+        return self.api.GetFriends(screen_name=self.user.screen_name)
     
     def generate_date_time(self):
         temp = self.user.created_at.split(' ')
-        temp2 = temp[0]+ " " + temp[1] + " " + temp[2] + " " + temp[3] + " " + temp[5]
+        temp2 = temp[0]+" "+temp[1]+" "+temp[2]+" "+temp[3]+" "+temp[5]
         dt = datetime.datetime.strptime(temp2, "%a %b %d %H:%M:%S %Y")
         return dt.strftime('%Y-%m-%d %H:%M:%S')
